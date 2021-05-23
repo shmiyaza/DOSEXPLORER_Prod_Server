@@ -28,8 +28,6 @@ app.use((req, res, next) => {
     }
 });
 app.get('/', (req, res) => {
-    res.send(process.env.SESSION_SECRET);
-    res.send(process.env.CUSTOMCONNSTR_DATABASE_SECRET);
-    console.log(req.headers);
+    res.send(`${process.env.SESSION_SECRET}, ${process.env.CUSTOMCONNSTR_DATABASE_SECRET}, test`);
 });
 app.listen(process.env.port || process.env.PORT || 4001, () => { });
