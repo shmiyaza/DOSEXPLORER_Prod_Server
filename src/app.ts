@@ -28,7 +28,7 @@ app.use((req, res, next) => {
     }
 })
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
     res.send(process.env.SESSION_SECRET)
     res.send(process.env.CUSTOMCONNSTR_DATABASE_SECRET)
     console.log(req.headers)
