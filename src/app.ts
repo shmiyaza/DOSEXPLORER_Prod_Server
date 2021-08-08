@@ -25,12 +25,17 @@ app.use((req, res, next) => {
 
 // app.use('/auth', require('./routes/authRoutes'))
 app.get('/', (req, res) => {
-    const db = new mongoDb(process.env.DATABASE!, process.env.USER!)
-    const user: user = db.main().catch(err => {
-        console.log(err)
-    }).then(() => {
-        res.send(user)
-    })
+    const mongo = new mongoDb<user>(process.env.DATABASE!, process.env.USER!)
+    mongo.connect(mongo.client)
+        .then(col => {
+            mongo.searchDocFromCol(col)
+                .then(docs => {
+                    res.json(docs)
+                })
+                .finally(() => {
+                    mongo.closeConnection(mongo.client)
+                })
+        })
 })
 
 app.listen(process.env.port || process.env.PORT || 4001, () => { })

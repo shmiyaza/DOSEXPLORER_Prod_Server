@@ -15,25 +15,25 @@ class mongoDb {
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
-        console.log(process.env.CONNECTION_URI);
         this.client = mongodb_1.MongoClient.connect(process.env.CONNECTION_URI);
     }
-    main() {
+    connect(client) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const db = (yield (yield this.client).connect()).db(this.databaseName);
-                const user = db.collection(this.collectionName)
-                    .findOne({
-                    $and: [
-                        { UserPrincipalName: 'shmiyaza@microsoft.com' }
-                    ]
-                });
-                console.log();
-                return user;
-            }
-            finally {
-                (yield this.client).close();
-            }
+            const db = (yield (yield client).connect()).db(this.databaseName);
+            return db.collection(this.collectionName);
+        });
+    }
+    searchDocFromCol(col) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const docs = yield col.find({})
+                .sort({ UserPrincipalName: 1 })
+                .toArray();
+            return docs;
+        });
+    }
+    closeConnection(client) {
+        return __awaiter(this, void 0, void 0, function* () {
+            (yield client).close();
         });
     }
 }
