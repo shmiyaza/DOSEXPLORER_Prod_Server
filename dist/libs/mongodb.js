@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mongoDb = void 0;
-class mongoDb {
+exports.mongodb = void 0;
+class mongodb {
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
@@ -21,11 +21,9 @@ class mongoDb {
             return db.collection(this.collectionName);
         });
     }
-    searchDocFromCol(col) {
+    searchDocFromCol(col, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const docs = yield col.find({})
-                .sort({ UserPrincipalName: 1 })
-                .toArray();
+            const docs = yield col.find({}, options);
             return docs;
         });
     }
@@ -35,4 +33,4 @@ class mongoDb {
         });
     }
 }
-exports.mongoDb = mongoDb;
+exports.mongodb = mongodb;

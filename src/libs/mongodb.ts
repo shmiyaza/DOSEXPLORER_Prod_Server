@@ -1,6 +1,6 @@
-import { MongoClient, Collection } from 'mongodb'
+import { MongoClient, Collection, FindOneOptions, Cursor, WithoutProjection } from 'mongodb'
 
-export class mongoDb<T> {
+export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }
 
     async getCollection(client: MongoClient) {
@@ -8,10 +8,8 @@ export class mongoDb<T> {
         return db.collection<T>(this.collectionName)
     }
 
-    async searchDocFromCol(col: Collection<T>) {
-        const docs: T | T[] | null = await col.find({},)
-            .sort({ UserPrincipalName: 1 })
-            .toArray()
+    async searchDocFromCol(col: Collection<T>, options?: any) {
+        const docs: Cursor<T> | Cursor<T[]> | null = await col.find({}, options)
         return docs
     }
 

@@ -3,11 +3,11 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { MongoClient } from 'mongodb'
 
-import { mongoDb } from './libs/mongodb'
+import { mongodb } from './libs/mongodb'
 import { user } from './interfaces/objects/user'
 
 const app = express()
-let client: MongoClient
+export let client: MongoClient
 
 app.disable('x-powered-by')
 app.use(cookieParser())
@@ -36,15 +36,15 @@ MongoClient.connect(process.env.CONNECTION_URI! || 'mongodb://shmiyaza:wpPpNXHG3
 })
 
 // app.use('/auth', require('./routes/authRoutes'))
-app.get('/', (req, res) => {
-    const mongo = new mongoDb(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
-    mongo.getCollection(client)
-        .then(col => {
-            mongo.searchDocFromCol(col)
-                .then(docs => {
-                    res.json(docs)
-                })
-        })
-})
+// app.get('/', (req, res) => {
+//     const mongo = new mongoDb(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
+//     mongo.getCollection(client)
+//         .then(col => {
+//             mongo.searchDocFromCol(col)
+//                 .then(docs => {
+//                     res.json(docs)
+//                 })
+//         })
+// })
 
-
+app.use('/users', require('./routes/userRoutes'))
