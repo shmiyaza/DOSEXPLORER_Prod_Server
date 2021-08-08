@@ -21,10 +21,13 @@ app.use((req, res, next) => {
         next();
     }
 });
-app.use('/auth', require('./routes/authRoutes'));
+// app.use('/auth', require('./routes/authRoutes'))
 app.get('/', (req, res) => {
     const db = new db_1.mongoDb(process.env.DATABASE, process.env.USER);
-    const user = db.main();
-    res.send(user);
+    const user = db.main().catch(err => {
+        console.log(err);
+    }).then(() => {
+        res.send(user);
+    });
 });
 app.listen(process.env.port || process.env.PORT || 4001, () => { });

@@ -1,17 +1,18 @@
-import { connect, MongoClient } from 'mongodb'
+import { MongoClient } from 'mongodb'
 
 import { user } from '../interfaces/objects/user'
 
-const client = MongoClient.connect(process.env.CONNECTION_URI!)
-
 export class mongoDb {
+    client: Promise<MongoClient>
 
     constructor(public databaseName: string, public collectionName: string) {
+        console.log(process.env.CONNECTION_URI!)
+        this.client = MongoClient.connect(process.env.CONNECTION_URI!)
     }
 
     async main() {
         try {
-            const db = (await (await client).connect()).db(this.databaseName)
+            const db = (await (await this.client).connect()).db(this.databaseName)
             const user: user = db.collection(this.collectionName)
                 .findOne({
                     $and: [
@@ -21,7 +22,7 @@ export class mongoDb {
             console.log()
             return user
         } finally {
-            (await client).close()
+            (await this.client).close()
         }
     }
 

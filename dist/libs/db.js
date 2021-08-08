@@ -11,16 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoDb = void 0;
 const mongodb_1 = require("mongodb");
-const client = mongodb_1.MongoClient.connect(process.env.CONNECTION_URI);
 class mongoDb {
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
+        console.log(process.env.CONNECTION_URI);
+        this.client = mongodb_1.MongoClient.connect(process.env.CONNECTION_URI);
     }
     main() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const db = (yield (yield client).connect()).db(this.databaseName);
+                const db = (yield (yield this.client).connect()).db(this.databaseName);
                 const user = db.collection(this.collectionName)
                     .findOne({
                     $and: [
@@ -31,7 +32,7 @@ class mongoDb {
                 return user;
             }
             finally {
-                (yield client).close();
+                (yield this.client).close();
             }
         });
     }
