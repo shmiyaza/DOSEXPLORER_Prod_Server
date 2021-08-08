@@ -3,7 +3,7 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { MongoClient } from 'mongodb'
 
-import { mongoDb } from './libs/db'
+import { mongoDb } from './libs/mongodb'
 import { user } from './interfaces/objects/user'
 
 const app = express()

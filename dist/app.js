@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const mongodb_1 = require("mongodb");
-const db_1 = require("./libs/db");
+const mongodb_2 = require("./libs/mongodb");
 const app = express_1.default();
 let client;
 app.disable('x-powered-by');
@@ -35,7 +35,7 @@ mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:
 });
 // app.use('/auth', require('./routes/authRoutes'))
 app.get('/', (req, res) => {
-    const mongo = new db_1.mongoDb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
+    const mongo = new mongodb_2.mongoDb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
     mongo.getCollection(client)
         .then(col => {
         mongo.searchDocFromCol(col)
