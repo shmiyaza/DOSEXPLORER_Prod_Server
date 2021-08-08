@@ -18,7 +18,7 @@ export class mongoDb {
                         { UserPrincipalName: 'shmiyaza@microsoft.com' }
                     ]
                 })
-
+            console.log()
             return user
         } finally {
             (await client).close()
