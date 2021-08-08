@@ -13,13 +13,10 @@ app.use(express_1.default.json({ 'type': ['application/json', 'application/scim+
 // add passportJs midleware 
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
-console.log('test');
 // set response header
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://brave-moss-0ec70b500.azurestaticapps.net");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Csrftoken");
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.header("Access-Control-Allow-Credentials", "true");
     if (req.method === 'OPTION') {
         res.send(200);
     }
