@@ -12,6 +12,7 @@ export let client: MongoClient
 app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(express.json({ 'type': ['application/json', 'application/scim+json'] }))
+app.use(express.urlencoded({ extended: true }))
 
 // set response header
 app.use((req, res, next) => {

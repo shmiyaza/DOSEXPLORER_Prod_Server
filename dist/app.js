@@ -11,6 +11,7 @@ const app = express_1.default();
 app.disable('x-powered-by');
 app.use(cookie_parser_1.default());
 app.use(express_1.default.json({ 'type': ['application/json', 'application/scim+json'] }));
+app.use(express_1.default.urlencoded({ extended: true }));
 // set response header
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Csrftoken");
