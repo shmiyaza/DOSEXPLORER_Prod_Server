@@ -5,14 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const passport_1 = __importDefault(require("passport"));
+const db_1 = require("./libs/db");
 const app = express_1.default();
 app.disable('x-powered-by');
 app.use(cookie_parser_1.default());
 app.use(express_1.default.json({ 'type': ['application/json', 'application/scim+json'] }));
-// add passportJs midleware 
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
 // set response header
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Csrftoken");
@@ -24,7 +21,10 @@ app.use((req, res, next) => {
         next();
     }
 });
+app.use('/auth', require('./routes/authRoutes'));
 app.get('/', (req, res) => {
-    res.send(`${process.env.SESSION_SECRET}, ${process.env.CUSTOMCONNSTR_CUSTOMCONNSTR_DATABASE_SECRET}, test`);
+    const db = new db_1.mongoDb(process.env.DATABASE, process.env.USER);
+    const user = db.main();
+    res.send(user);
 });
 app.listen(process.env.port || process.env.PORT || 4001, () => { });

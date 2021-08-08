@@ -1,0 +1,17 @@
+export interface user extends Object {
+    ObjectGUID?: string,
+    UserPrincipalName?: string,
+    DisplayName?: string,
+    FirstName?: string,
+    LastName?: string,
+    Email?: string,
+    Company?: string,
+    Department?: string,
+    EmployeeID?: string,
+    Country?: string,
+    Phone?: string,
+    AccountEnabled?: string,
+    createdDateTime?: Date,
+    updateLastTime?: Date,
+    Password?: string,
+}
