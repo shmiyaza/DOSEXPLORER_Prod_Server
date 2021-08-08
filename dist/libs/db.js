@@ -15,7 +15,10 @@ class mongoDb {
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
-        this.client = mongodb_1.MongoClient.connect(process.env.CONNECTION_URI);
+        this.client = mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:wpPpNXHG31Hta4noucc9yTLhhm7AP9CNRs23Kd7LbiFmzGqvv48I6jukzdKPK4UjGQBWYjE3k3CDxmK6dix6iw%3D%3D@shmiyaza.mongo.cosmos.azure.com:10255/?ssl=true&appName=@shmiyaza@', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
     }
     connect(client) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 // app.use('/auth', require('./routes/authRoutes'))
 app.get('/', (req, res) => {
-    const mongo = new db_1.mongoDb(process.env.DATABASE, process.env.USER);
+    const mongo = new db_1.mongoDb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
     mongo.connect(mongo.client)
         .then(col => {
         mongo.searchDocFromCol(col)
