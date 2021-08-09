@@ -14,6 +14,7 @@ const router = express_1.default.Router();
 //       res.status(404).json({error: {errorCode: 'Unauthorize.', message: 'Authorize bafore call API.'}})
 //     }
 //   })
+//Get all users
 router.get('/', (_req, res) => {
     const options = { projection: { _id: 0, Password: 0 } };
     const mongo = new mongodb_1.mongodb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
@@ -21,7 +22,10 @@ router.get('/', (_req, res) => {
         .then(col => {
         mongo.searchDocFromCol(col, options)
             .then(docs => {
-            res.status(200).json(docs.sort({ UserPrincipalName: 1 }).toArray());
+            const users = docs.sort({ UserPrincipalName: 1 }).toArray();
+            users.then(val => {
+                res.status(200).json(val);
+            });
         });
     });
 });

@@ -1,11 +1,11 @@
-import { MongoClient, Collection, FindOneOptions, Cursor, WithoutProjection } from 'mongodb'
+import { MongoClient, Collection, Cursor } from 'mongodb'
 
 export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }
 
     async getCollection(client: MongoClient) {
-        const db = client.db(this.databaseName)
-        return db.collection<T>(this.collectionName)
+        return client.db(this.databaseName)
+            .collection<T>(this.collectionName)
     }
 
     async searchDocFromCol(col: Collection<T>, options?: any) {

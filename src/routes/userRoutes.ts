@@ -14,6 +14,7 @@ const router = express.Router()
 //     }
 //   })
 
+//Get all users
 router.get('/', (_req, res) => {
     const options: any = { projection: { _id: 0, Password: 0 } }
     const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
@@ -22,7 +23,10 @@ router.get('/', (_req, res) => {
         .then(col => {
             mongo.searchDocFromCol(col, options)
                 .then(docs => {
-                    res.status(200).json(docs.sort({ UserPrincipalName: 1 }).toArray())
+                    const users = docs.sort({ UserPrincipalName: 1 }).toArray()
+                    users.then(val => {
+                        res.status(200).json(val)
+                    })
                 })
         })
 })
