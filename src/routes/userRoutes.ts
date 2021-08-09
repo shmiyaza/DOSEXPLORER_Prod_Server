@@ -1,5 +1,4 @@
 import express from 'express'
-import { FindOneOptions } from 'mongodb'
 
 import { user } from '../interfaces/objects/user'
 import { mongodb } from '../libs/mongodb'

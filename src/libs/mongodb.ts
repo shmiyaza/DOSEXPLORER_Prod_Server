@@ -4,7 +4,7 @@ export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }
 
     async getCollection(client: MongoClient) {
-        const db = (await (await client).connect()).db(this.databaseName)
+        const db = client.db(this.databaseName)
         return db.collection<T>(this.collectionName)
     }
 
