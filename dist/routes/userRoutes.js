@@ -57,7 +57,7 @@ router.get('/:user', (req, res) => {
 });
 //Create a user
 router.post('/', (req, res) => {
-    const data = new verifyData_1.createUserObject(req.body);
+    const data = new verifyData_1.userManagement(req.body);
     const newlyUser = data.createUser();
     if (!newlyUser)
         return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
@@ -85,6 +85,30 @@ router.delete('/:user', (req, res) => {
         if (!result.ok)
             res.send(400).json({ message: result.lastErrorObject });
         res.send(200).json({ message: 'Successfully delete a user.', result: result.ok });
+    }))();
+});
+// Update a user
+router.patch('/:user', (req, res) => {
+    const searchString = req.params.user;
+    const update = req.body;
+    const data = new verifyData_1.userManagement(update);
+    const options = { returnDocument: 'after' };
+    const filter = {
+        $or: [
+            { UserPrincipalName: new RegExp(searchString, 'i') },
+            { ObjectGUID: new RegExp(searchString, 'i') },
+            { Email: new RegExp(searchString, 'i') },
+        ]
+    };
+    const updatedUser = data.updateUser();
+    if (!updatedUser)
+        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+    (() => __awaiter(void 0, void 0, void 0, function* () {
+        const col = yield mongo.getCollection(app_1.client);
+        const result = yield mongo.updateDocFromCol(col, filter, updatedUser, options);
+        if (!result.ok)
+            res.status(400).json({ message: result.lastErrorObject });
+        res.status(200).json({ message: 'Successfully update a user.', result: result.ok, value: result.value });
     }))();
 });
 module.exports = router;

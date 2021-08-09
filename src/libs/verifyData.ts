@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 import { user } from '../interfaces/objects/user'
 import { bcryptOperation } from './bcryptOperation'
 
-export class createUserObject {
+export class userManagement {
     errorCnt: number = 0
     errorMsg: string[] = []
     user: user = {}
@@ -57,7 +57,6 @@ export class createUserObject {
 
     createUser() {
         this.user = this.initializeUser(this.inputData)
-
         this.checkPassword(this.user.Password)
         this.checkUserPrincipalName(this.user.UserPrincipalName)
         this.checkEmail(this.user.Email)
@@ -75,6 +74,23 @@ export class createUserObject {
                     this.user.Password = hashedPassword
                 })
 
+            return this.user
+        }
+    }
+
+    updateUser() {
+        this.user = this.inputData
+
+        Object.keys(this.user).forEach((key) => {
+            if (key === 'UserPrincipalName') { this.checkUserPrincipalName(this.user.UserPrincipalName); }
+            if (key === 'Email') { this.checkEmail(this.user.Email!); }
+            if (key === 'DisplayName') { this.checkDisplayName(this.user.DisplayName!); }
+            if (key === 'AccountEnabled') { this.checkAccountEnabled(this.user.AccountEnabled!); }
+        })
+
+        if (this.errorCnt) return false
+        if (!this.errorCnt) {
+            this.user.updateLastTime = new Date()
             return this.user
         }
     }

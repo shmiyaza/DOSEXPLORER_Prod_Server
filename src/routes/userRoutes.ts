@@ -3,8 +3,8 @@ import express from 'express'
 import { user } from '../interfaces/objects/user'
 import { mongodb } from '../libs/mongodb'
 import { client } from '../app'
-import { FilterQuery } from 'mongodb'
-import { createUserObject } from '../libs/verifyData'
+import { FilterQuery, FindOneAndUpdateOption } from 'mongodb'
+import { userManagement } from '../libs/verifyData'
 
 const router = express.Router()
 const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
@@ -57,7 +57,7 @@ router.get('/:user', (req, res) => {
 
 //Create a user
 router.post('/', (req, res) => {
-    const data = new createUserObject(req.body as user)
+    const data = new userManagement(req.body as user)
     const newlyUser = data.createUser()
 
     if (!newlyUser)
@@ -93,5 +93,38 @@ router.delete('/:user', (req, res) => {
     })()
 
 })
+
+// Update a user
+router.patch('/:user', (req, res) => {
+    const searchString = req.params.user
+    const update = (req.body as user)
+    const data = new userManagement(update)
+    const options: FindOneAndUpdateOption<user> = { returnDocument: 'after' }
+    const filter: FilterQuery<any> = {
+        $or: [
+            { UserPrincipalName: new RegExp(searchString, 'i') },
+            { ObjectGUID: new RegExp(searchString, 'i') },
+            { Email: new RegExp(searchString, 'i') },
+        ]
+    }
+
+    const updatedUser = data.updateUser()
+    if (!updatedUser)
+        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+
+    (async () => {
+        const col = await mongo.getCollection(client)
+        const result = await mongo.updateDocFromCol(col, filter, updatedUser, options)
+
+        if (!result.ok)
+            res.status(400).json({ message: result.lastErrorObject })
+        res.status(200).json({ message: 'Successfully update a user.', result: result.ok, value: result.value })
+    })()
+
+
+
+})
+
+
 
 module.exports = router

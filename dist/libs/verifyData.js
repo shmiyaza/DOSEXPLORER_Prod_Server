@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUserObject = void 0;
+exports.userManagement = void 0;
 const uuid_1 = require("uuid");
 const bcryptOperation_1 = require("./bcryptOperation");
-class createUserObject {
+class userManagement {
     constructor(inputData) {
         this.inputData = inputData;
         this.errorCnt = 0;
@@ -73,9 +73,32 @@ class createUserObject {
             return this.user;
         }
     }
+    updateUser() {
+        this.user = this.inputData;
+        Object.keys(this.user).forEach((key) => {
+            if (key === 'UserPrincipalName') {
+                this.checkUserPrincipalName(this.user.UserPrincipalName);
+            }
+            if (key === 'Email') {
+                this.checkEmail(this.user.Email);
+            }
+            if (key === 'DisplayName') {
+                this.checkDisplayName(this.user.DisplayName);
+            }
+            if (key === 'AccountEnabled') {
+                this.checkAccountEnabled(this.user.AccountEnabled);
+            }
+        });
+        if (this.errorCnt)
+            return false;
+        if (!this.errorCnt) {
+            this.user.updateLastTime = new Date();
+            return this.user;
+        }
+    }
     pushError(msg) {
         this.errorCnt++;
         this.errorMsg.push(msg);
     }
 }
-exports.createUserObject = createUserObject;
+exports.userManagement = userManagement;

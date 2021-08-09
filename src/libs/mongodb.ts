@@ -1,4 +1,6 @@
-import { MongoClient, Collection, Cursor, FindOneOptions, FilterQuery, OptionalId } from 'mongodb'
+import { MongoClient, Collection, Cursor, FindOneOptions, FilterQuery, OptionalId, FindOneAndUpdateOption } from 'mongodb'
+
+import { scimUser } from '../interfaces/scim/scimUser'
 
 export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }
@@ -15,7 +17,7 @@ export class mongodb<T> {
     }
 
     // Get docs with find method
-    async findDocFromCol(col: Collection<T>, filter: FilterQuery<any> = {}, options?: any) {
+    async findDocFromCol(col: Collection<T>, filter: FilterQuery<any> = {}, options: Object) {
         const docs: Cursor<T> | Cursor<T[]> | null = await col.find(filter, options)
         return docs
     }
@@ -25,8 +27,17 @@ export class mongodb<T> {
         return await col.insertOne(doc)
     }
 
-    // Delete a doc with
+    // Delete a doc with findOneAndDelete method
     async deleteDocFromCol(col: Collection<T>, filter: any) {
         return await col.findOneAndDelete(filter)
+    }
+
+    // Update a doc with updateOne method
+    async updateDocFromCol(col: Collection<T>, filter: FilterQuery<any>, update: T, options: FindOneAndUpdateOption<any>) {
+        return await col.findOneAndUpdate(
+            filter,
+            { $set: (update) },
+            options
+        )
     }
 }

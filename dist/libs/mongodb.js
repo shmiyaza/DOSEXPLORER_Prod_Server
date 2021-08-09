@@ -41,10 +41,16 @@ class mongodb {
             return yield col.insertOne(doc);
         });
     }
-    // Delete a doc with
+    // Delete a doc with findOneAndDelete method
     deleteDocFromCol(col, filter) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield col.findOneAndDelete(filter);
+        });
+    }
+    // Update a doc with updateOne method
+    updateDocFromCol(col, filter, update, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield col.findOneAndUpdate(filter, { $set: (update) }, options);
         });
     }
 }
