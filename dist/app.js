@@ -44,8 +44,4 @@ mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:
 //                 })
 //         })
 // })
-app.get('*', (req, res, next) => {
-    console.log(req);
-    next();
-});
 app.use('/users', require('./routes/userRoutes'));
