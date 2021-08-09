@@ -15,21 +15,24 @@ class mongodb {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
     }
+    // Get collection
     getCollection(client) {
         return __awaiter(this, void 0, void 0, function* () {
             return client.db(this.databaseName)
                 .collection(this.collectionName);
         });
     }
-    searchDocFromCol(col, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const docs = yield col.find({}, options);
-            return docs;
-        });
-    }
+    // Close MongoClient
     closeConnection(client) {
         return __awaiter(this, void 0, void 0, function* () {
             (yield client).close();
+        });
+    }
+    // Get docs with find method
+    findDocFromCol(col, filter = {}, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const docs = yield col.find(filter, options);
+            return docs;
         });
     }
 }
