@@ -41,8 +41,8 @@ export class createUserObject {
 
     checkEmail(val: string | undefined) {
         const reg = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/
-        if (!val) return this.pushError('Email must be included in body.')
-        if (!reg.test(val)) return this.pushError(`The format of Email is wrong. You must match RegExp (${reg})`)
+        if (val && !reg.test(val))
+            return this.pushError(`The format of Email is wrong. You must match RegExp (${reg})`)
     }
 
     checkAccountEnabled(val: string | undefined) {
