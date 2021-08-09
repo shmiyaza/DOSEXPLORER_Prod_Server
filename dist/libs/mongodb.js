@@ -35,10 +35,16 @@ class mongodb {
             return docs;
         });
     }
-    // create a doc with insertOne method
+    // Create a doc with insertOne method
     insertOnetoCol(col, doc) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield col.insertOne(doc);
+        });
+    }
+    // Delete a doc with
+    deleteDocFromCol(col, filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield col.findOneAndDelete(filter);
         });
     }
 }

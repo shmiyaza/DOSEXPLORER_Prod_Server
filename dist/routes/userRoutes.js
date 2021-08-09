@@ -50,10 +50,12 @@ router.get('/:user', (req, res) => {
         const col = yield mongo.getCollection(app_1.client);
         const docs = yield mongo.findDocFromCol(col, filter, options);
         const users = yield docs.sort({ UserPrincipalName: 1 }).toArray();
+        if (!users)
+            res.status(200).json(`${searchString} is not found.`);
         res.status(200).json(users);
     }))();
 });
-//Create User
+//Create a user
 router.post('/', (req, res) => {
     const data = new verifyData_1.createUserObject(req.body);
     const newlyUser = data.createUser();
@@ -63,8 +65,26 @@ router.post('/', (req, res) => {
         const col = yield mongo.getCollection(app_1.client);
         const result = yield mongo.insertOnetoCol(col, newlyUser);
         if (result.result.ok) {
-            return res.status(200).json({ message: 'Successfully create user.', result: result.result });
+            return res.status(200).json({ message: 'Successfully create a user.', result: result.result });
         }
+    }))();
+});
+// Delete a user
+router.delete('/:user', (req, res) => {
+    const searchString = req.params.user;
+    const filter = {
+        $or: [
+            { UserPrincipalName: new RegExp(searchString, 'i') },
+            { ObjectGUID: new RegExp(searchString, 'i') },
+            { Email: new RegExp(searchString, 'i') },
+        ]
+    };
+    (() => __awaiter(void 0, void 0, void 0, function* () {
+        const col = yield mongo.getCollection(app_1.client);
+        const result = yield mongo.deleteDocFromCol(col, filter);
+        if (!result.ok)
+            res.send(400).json({ message: result.lastErrorObject });
+        res.send(200).json({ message: 'Successfully delete a user.', result: result.ok });
     }))();
 });
 module.exports = router;

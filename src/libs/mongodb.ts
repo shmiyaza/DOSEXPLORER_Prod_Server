@@ -20,8 +20,13 @@ export class mongodb<T> {
         return docs
     }
 
-    // create a doc with insertOne method
+    // Create a doc with insertOne method
     async insertOnetoCol(col: Collection<T>, doc: OptionalId<T>) {
         return await col.insertOne(doc)
+    }
+
+    // Delete a doc with
+    async deleteDocFromCol(col: Collection<T>, filter: any) {
+        return await col.findOneAndDelete(filter)
     }
 }
