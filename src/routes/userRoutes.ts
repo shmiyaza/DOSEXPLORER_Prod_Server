@@ -3,7 +3,8 @@ import express from 'express'
 import { user } from '../interfaces/objects/user'
 import { mongodb } from '../libs/mongodb'
 import { client } from '../app'
-import { FilterQuery, FindOneOptions } from 'mongodb'
+import { FilterQuery } from 'mongodb'
+import { createUserObject } from '../libs/verifyData'
 
 const router = express.Router()
 const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
@@ -50,5 +51,23 @@ router.get('/:user', (req, res) => {
     })()
 
 })
+
+//Create User
+router.post('/', (req, res) => {
+    const data = new createUserObject(req.body as user)
+    const newlyUser = data.createUser()
+
+    if (!newlyUser)
+        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+
+    (async () => {
+        const col = await mongo.getCollection(client)
+        const result = await mongo.insertOnetoCol(col, newlyUser)
+        if (result.result.ok) {
+            return res.status(200).json({ message: 'Successfully create user.', result: result.result })
+        }
+    })()
+})
+
 
 module.exports = router

@@ -1,4 +1,4 @@
-import { MongoClient, Collection, Cursor, FindOneOptions, FilterQuery } from 'mongodb'
+import { MongoClient, Collection, Cursor, FindOneOptions, FilterQuery, OptionalId } from 'mongodb'
 
 export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }
@@ -18,5 +18,10 @@ export class mongodb<T> {
     async findDocFromCol(col: Collection<T>, filter: FilterQuery<any> = {}, options?: any) {
         const docs: Cursor<T> | Cursor<T[]> | null = await col.find(filter, options)
         return docs
+    }
+
+    // create a doc with insertOne method
+    async insertOnetoCol(col: Collection<T>, doc: OptionalId<T>) {
+        return await col.insertOne(doc)
     }
 }

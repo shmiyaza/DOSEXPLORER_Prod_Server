@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongodb_1 = require("../libs/mongodb");
 const app_1 = require("../app");
+const verifyData_1 = require("../libs/verifyData");
 const router = express_1.default.Router();
 const mongo = new mongodb_1.mongodb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
 // router.all('*', (req, res, next) => {
@@ -50,6 +51,20 @@ router.get('/:user', (req, res) => {
         const docs = yield mongo.findDocFromCol(col, filter, options);
         const users = yield docs.sort({ UserPrincipalName: 1 }).toArray();
         res.status(200).json(users);
+    }))();
+});
+//Create User
+router.post('/', (req, res) => {
+    const data = new verifyData_1.createUserObject(req.body);
+    const newlyUser = data.createUser();
+    if (!newlyUser)
+        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+    (() => __awaiter(void 0, void 0, void 0, function* () {
+        const col = yield mongo.getCollection(app_1.client);
+        const result = yield mongo.insertOnetoCol(col, newlyUser);
+        if (result.result.ok) {
+            return res.status(200).json({ message: 'Successfully create user.', result: result.result });
+        }
     }))();
 });
 module.exports = router;

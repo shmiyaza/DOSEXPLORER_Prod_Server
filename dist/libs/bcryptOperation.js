@@ -8,38 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mongodb = void 0;
-class mongodb {
-    constructor(databaseName, collectionName) {
-        this.databaseName = databaseName;
-        this.collectionName = collectionName;
-    }
-    // Get collection
-    getCollection(client) {
+exports.bcryptOperation = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+class bcryptOperation {
+    constructor() { }
+    // To hash string
+    static toHashString(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return client.db(this.databaseName)
-                .collection(this.collectionName);
+            return yield bcryptjs_1.default.hash(data, 10);
         });
     }
-    // Close MongoClient
-    closeConnection(client) {
+    // Compare hash string
+    static compareHashString(data, hash) {
         return __awaiter(this, void 0, void 0, function* () {
-            (yield client).close();
-        });
-    }
-    // Get docs with find method
-    findDocFromCol(col, filter = {}, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const docs = yield col.find(filter, options);
-            return docs;
-        });
-    }
-    // create a doc with insertOne method
-    insertOnetoCol(col, doc) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield col.insertOne(doc);
+            return yield bcryptjs_1.default.compare(data, hash);
         });
     }
 }
-exports.mongodb = mongodb;
+exports.bcryptOperation = bcryptOperation;
