@@ -9,14 +9,10 @@ import { userManagement } from '../libs/verifyData'
 const router = express.Router()
 const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
 
-
-// router.all('*', (req, res, next) => {
-//     if (req.isAuthenticated()){
-//       next()
-//     } else {
-//       res.status(404).json({error: {errorCode: 'Unauthorize.', message: 'Authorize bafore call API.'}})
-//     }
-//   })
+router.all('*', (req, res, next) => {
+    (req.session as any).user ? next() :
+        res.status(400).json({ error: { errorCode: 'Unauthorize.', message: 'Authorize bafore call API.' } })
+})
 
 //Get all users
 router.get('/', (_req, res) => {
@@ -88,8 +84,8 @@ router.delete('/:user', (req, res) => {
         const result = await mongo.deleteDocFromCol(col, filter)
 
         if (!result.ok)
-            res.send(400).json({ message: result.lastErrorObject })
-        res.send(200).json({ message: 'Successfully delete a user.', result: result.ok })
+            res.status(400).json({ message: result.lastErrorObject })
+        res.status(200).json({ message: 'Successfully delete a user.', result: result.ok })
     })()
 
 })
@@ -118,7 +114,7 @@ router.patch('/:user', (req, res) => {
 
         if (!result.ok)
             res.status(400).json({ message: result.lastErrorObject })
-        res.status(200).json({ message: 'Successfully update a user.', result: result.ok, value: result.value })
+        res.status(200).json({ message: 'Successfully update a user.', result: result.ok })
     })()
 
 

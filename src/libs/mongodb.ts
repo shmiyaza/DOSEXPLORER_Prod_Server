@@ -1,6 +1,4 @@
-import { MongoClient, Collection, Cursor, FindOneOptions, FilterQuery, OptionalId, FindOneAndUpdateOption } from 'mongodb'
-
-import { scimUser } from '../interfaces/scim/scimUser'
+import { MongoClient, Collection, Cursor, FilterQuery, OptionalId, FindOneAndUpdateOption } from 'mongodb'
 
 export class mongodb<T> {
     constructor(public databaseName: string, public collectionName: string) { }

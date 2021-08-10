@@ -5,13 +5,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = void 0;
 const express_1 = __importDefault(require("express"));
+const express_session_1 = __importDefault(require("express-session"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const mongodb_1 = require("mongodb");
+const uuid_1 = require("uuid");
 const app = express_1.default();
 app.disable('x-powered-by');
 app.use(cookie_parser_1.default());
 app.use(express_1.default.json({ 'type': ['application/json', 'application/scim+json'] }));
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_session_1.default({
+    genid: (_req) => { return uuid_1.v4(); },
+    secret: process.env.SECRET || 'test',
+    resave: false,
+    saveUninitialized: false,
+    name: 'TOKEN',
+    proxy: true,
+    cookie: {
+        httpOnly: true,
+        // secure: true,
+        maxAge: 1000 * 60 * 60 * 24,
+        sameSite: 'none'
+    }
+}));
 // set response header
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Csrftoken");
@@ -33,15 +49,5 @@ mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:
     exports.client = database;
     app.listen(process.env.port || process.env.PORT || 4001, () => { });
 });
-// app.use('/auth', require('./routes/authRoutes'))
-// app.get('/', (req, res) => {
-//     const mongo = new mongoDb(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
-//     mongo.getCollection(client)
-//         .then(col => {
-//             mongo.searchDocFromCol(col)
-//                 .then(docs => {
-//                     res.json(docs)
-//                 })
-//         })
-// })
 app.use('/users', require('./routes/userRoutes'));
+app.use('/auth', require('./routes/authRoutes'));

@@ -2,6 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { MongoClient } from 'mongodb'
+import { v4 } from 'uuid'
 
 const app = express()
 export let client: MongoClient
@@ -10,6 +11,20 @@ app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(express.json({ 'type': ['application/json', 'application/scim+json'] }))
 app.use(express.urlencoded({ extended: true }))
+app.use(session({
+    genid: (_req) => { return v4() },
+    secret: process.env.SECRET! || 'test',
+    resave: false,
+    saveUninitialized: false,
+    name: 'TOKEN',
+    proxy: true,
+    cookie: {
+        httpOnly: true,
+        // secure: true,
+        maxAge: 1000 * 60 * 60 * 24, // 24 hour
+        sameSite: 'none'
+    }
+}))
 
 // set response header
 app.use((req, res, next) => {
@@ -33,16 +48,6 @@ MongoClient.connect(process.env.CONNECTION_URI! || 'mongodb://shmiyaza:wpPpNXHG3
     app.listen(process.env.port || process.env.PORT || 4001, () => { })
 })
 
-// app.use('/auth', require('./routes/authRoutes'))
-// app.get('/', (req, res) => {
-//     const mongo = new mongoDb(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
-//     mongo.getCollection(client)
-//         .then(col => {
-//             mongo.searchDocFromCol(col)
-//                 .then(docs => {
-//                     res.json(docs)
-//                 })
-//         })
-// })
 
 app.use('/users', require('./routes/userRoutes'))
+app.use('/auth', require('./routes/authRoutes'))
