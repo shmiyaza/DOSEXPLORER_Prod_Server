@@ -135,6 +135,7 @@ export class scimCore {
             : undefined
 
         return {
+            externalId: body.externalId,
             UserPrincipalName: body.userName,
             DisplayName: body.displayName,
             FirstName: body.name ? body.name!.givenName : undefined,

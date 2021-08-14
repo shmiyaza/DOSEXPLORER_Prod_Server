@@ -116,6 +116,7 @@ class scimCore {
             body['urn:ietf:params:scim:schemas:extension:enterprise:2.0:User']
             : undefined;
         return {
+            externalId: body.externalId,
             UserPrincipalName: body.userName,
             DisplayName: body.displayName,
             FirstName: body.name ? body.name.givenName : undefined,
