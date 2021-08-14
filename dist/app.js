@@ -51,3 +51,4 @@ mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:
 });
 app.use('/users', require('./routes/userRoutes'));
 app.use('/auth', require('./routes/authRoutes'));
+app.use('/scim/v2', require('./routes/scimRoutes'));

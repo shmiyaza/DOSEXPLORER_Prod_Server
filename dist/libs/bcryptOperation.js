@@ -17,7 +17,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class bcryptOperation {
     constructor() { }
     // To hash string
-    static toHashString(data) {
+    static toHashString(data = "defaultPassword") {
         return __awaiter(this, void 0, void 0, function* () {
             return yield bcryptjs_1.default.hash(data, 10);
         });

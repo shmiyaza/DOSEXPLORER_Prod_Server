@@ -121,6 +121,4 @@ router.patch('/:user', (req, res) => {
 
 })
 
-
-
 module.exports = router

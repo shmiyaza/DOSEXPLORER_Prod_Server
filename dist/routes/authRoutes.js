@@ -38,7 +38,7 @@ router.get('/logout', (req, res) => {
     });
 });
 // Check is authenticated
-router.get('check', (req, res) => {
+router.get('/check', (req, res) => {
     req.session.user ? res.status(200).json({ username: req.session.user })
         : res.status(401);
 });

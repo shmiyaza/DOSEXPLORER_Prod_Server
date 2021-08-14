@@ -4,7 +4,7 @@ export class bcryptOperation {
     constructor() { }
 
     // To hash string
-    static async toHashString(data: string) {
+    static async toHashString(data: string = "defaultPassword") {
         return await bcrypt.hash(data, 10);
     }
 

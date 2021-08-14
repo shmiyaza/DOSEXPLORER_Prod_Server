@@ -25,15 +25,14 @@ class userManagement {
             Phone: data.Phone ? data.Phone.toString() : undefined,
             AccountEnabled: data.AccountEnabled ? data.AccountEnabled.toString() : undefined,
             Password: data.Password ? data.Password.toString() : undefined,
+            externalId: data.externalId ? data.externalId.toString() : undefined,
         };
     }
-    checkPassword(val) {
-        const reg = /^[a-zA-Z0-9.?/-]{8,24}$/;
-        if (!val)
-            return this.pushError('Password must be included in body');
-        if (!reg.test(val))
-            return this.pushError(`Password: (${reg})`);
-    }
+    // checkPassword(val: string | undefined) {
+    //     const reg = /^[a-zA-Z0-9.?/-]{8,24}$/
+    //     if (!val) return this.pushError('Password must be included in body')
+    //     if (!reg.test(val)) return this.pushError(`Password: (${reg})`)
+    // }
     checkUserPrincipalName(val) {
         const reg = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/;
         if (!val)
@@ -75,7 +74,6 @@ class userManagement {
     }
     createUser() {
         this.user = this.initializeUser(this.inputData);
-        this.checkPassword(this.user.Password);
         this.checkUserPrincipalName(this.user.UserPrincipalName);
         this.checkEmail(this.user.Email);
         this.checkDisplayName(this.user.DisplayName);
