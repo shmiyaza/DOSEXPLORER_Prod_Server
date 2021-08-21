@@ -15,7 +15,7 @@ export class mongodb<T> {
     }
 
     // Get docs with find method
-    async findDocFromCol(col: Collection<T>, filter: FilterQuery<any> = {}, options: Object) {
+    async findDocFromCol(col: Collection<T>, filter: FilterQuery<any> = {}, options?: Object) {
         const docs: Cursor<T> | Cursor<T[]> | null = await col.find(filter, options)
         return docs
     }

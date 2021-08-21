@@ -139,47 +139,105 @@ class scimCore {
                 enterpriseExtension.employeeNumber : undefined
         };
     }
-    static convertAttributeToUser(resource) {
+    static parsePatchOp(body) {
         const scimUser = {};
-        Object.keys(resource).forEach(key => {
-            if (!resource[key]) {
-                return;
+        const operations = body.Operations;
+        const mutability = ['username', 'displayname', 'emails[type eq "work"].value', 'active'];
+        operations.forEach(element => {
+            if (element.op.toLowerCase() === 'add') {
+                if (element.path.toLowerCase() === 'username') {
+                    scimUser.UserPrincipalName = element.value;
+                }
+                if (element.path.toLowerCase() === 'displayname') {
+                    scimUser.DisplayName = element.value;
+                }
+                if (element.path.toLowerCase() === 'name.givenname') {
+                    scimUser.FirstName = element.value;
+                }
+                if (element.path.toLowerCase() === 'name.familyname') {
+                    scimUser.LastName = element.value;
+                }
+                if (element.path.toLowerCase() === 'emails[type eq "work"].value') {
+                    scimUser.Email = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization') {
+                    scimUser.Company = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department') {
+                    scimUser.Department = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber') {
+                    scimUser.EmployeeID = element.value;
+                }
+                if (element.path.toLowerCase() === 'addresses[type eq "work"].country') {
+                    scimUser.Country = element.value;
+                }
+                if (element.path.toLowerCase() === 'active') {
+                    scimUser.AccountEnabled = element.value.toLocaleLowerCase() === 'true' ? 'Enable' : 'Disable';
+                }
             }
-            else {
-                if (key === 'username')
-                    scimUser.UserPrincipalName = resource.username;
-                if (key === 'displayname')
-                    scimUser.DisplayName = resource.displayname;
-                if (key === 'emails[type eq \"work\"].value')
-                    scimUser.Email = resource["emails[type eq \"work\"].value"];
-                if (key === 'addresses[type eq \"work\"].country')
-                    scimUser.Country = resource["addresses[type eq \"work\"].country"];
-                if (key === 'active')
-                    scimUser.AccountEnabled = resource.active ? 'Enable' : 'Disable';
-                if (key === 'familyname')
-                    scimUser.LastName = resource["name.familyname"];
-                if (key === 'givenname')
-                    scimUser.FirstName = resource["name.givenname"];
-                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department')
-                    scimUser.Department = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department"];
-                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber')
-                    scimUser.EmployeeID = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber"];
-                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization')
-                    scimUser.Company = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization"];
+            // Operation: remove
+            // Azure AD does not send Remove to a single attribute
+            if (element.op.toLocaleLowerCase() === 'remove') {
+                // If an attribute is removed or becomes unassigned and is defined as a required or read-only,
+                // If target path is not undefined, responses scimError 400 "noTarget" - RFC7644 3.12.
+                // if (!element.path) return scimErrors.scimErrorNoTarget()
+                // // response scimError 400 "mutabliliy" - RFC7644.
+                // if (mutability.includes(element.path.toLowerCase())) return scimErrors.scimErrorMutability(element.path)
+                if (element.path.toLowerCase() === 'name.givenname') {
+                    scimUser.FirstName = undefined;
+                }
+                if (element.path.toLowerCase() === 'name.familyname') {
+                    scimUser.LastName = undefined;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization') {
+                    scimUser.Company = undefined;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department') {
+                    scimUser.Department = undefined;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber') {
+                    scimUser.EmployeeID = undefined;
+                }
+                if (element.path.toLowerCase() === 'addresses.country') {
+                    scimUser.Country = undefined;
+                }
+            }
+            // Operation: replace
+            if (element.op.toLowerCase() === 'replace') {
+                if (element.path.toLowerCase() === 'username') {
+                    scimUser.UserPrincipalName = element.value;
+                }
+                if (element.path.toLowerCase() === 'displayname') {
+                    scimUser.DisplayName = element.value;
+                }
+                if (element.path.toLowerCase() === 'name.givenname') {
+                    scimUser.FirstName = element.value;
+                }
+                if (element.path.toLowerCase() === 'name.familyname') {
+                    scimUser.LastName = element.value;
+                }
+                if (element.path.toLowerCase() === 'emails[type eq "work"].value') {
+                    scimUser.Email = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization') {
+                    scimUser.Company = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department') {
+                    scimUser.Department = element.value;
+                }
+                if (element.path.toLowerCase() === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber') {
+                    scimUser.EmployeeID = element.value;
+                }
+                if (element.path.toLowerCase() === 'addresses[type eq "work"].country') {
+                    scimUser.Country = element.value;
+                }
+                if (element.path.toLowerCase() === 'active') {
+                    scimUser.AccountEnabled = element.value.toLocaleLowerCase() === 'true' ? 'Enable' : 'Disable';
+                }
             }
         });
         return scimUser;
-    }
-    static parsePatchOp(patchOp) {
-        let returnUser = {};
-        patchOp.Operations.forEach(element => {
-            if (element.op.toLowerCase() === 'add' || 'replace')
-                returnUser[element.path.toLowerCase()] = element.value;
-            if (element.op.toLowerCase() === 'remove') {
-                returnUser[element.path.toLowerCase()] = undefined;
-            }
-        });
-        return returnUser;
     }
 }
 exports.scimCore = scimCore;

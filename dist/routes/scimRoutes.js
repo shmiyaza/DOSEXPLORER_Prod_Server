@@ -118,43 +118,39 @@ router.post('/Users', (req, res) => {
     const data = new verifyData_1.userManagement(scimUser);
     const newlyUser = data.createUser();
     if (!newlyUser)
-        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+        return res.status(409).json({ errors: data.errorCnt, message: data.errorMsg });
     (() => __awaiter(void 0, void 0, void 0, function* () {
         const col = yield mongo.getCollection(app_1.client);
-        console.log(newlyUser);
         mongo.insertOnetoCol(col, newlyUser)
             .then(() => {
             return res.status(201).json(scimCore_1.scimCore.knownResource(newlyUser));
+        })
+            .catch(err => {
+            if (err.code === 2)
+                return res.status(500).json('The specified options are in error or are incompatible with other options.');
+            if (err.code === 11000)
+                return res.status(409).json(scimError_1.scimErrors.scimErrorConfilctTarget());
         });
-        // .catch(err => {
-        //     if (err.code === 2)
-        //         return res.status(500).json('The specified options are in error or are incompatible with other options.')
-        // })
     }))();
 });
-router.patch('/Users/:userId', (req, res) => {
+router.patch('/Users/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const searchString = req.params.userId;
     const filter = { ObjectGUID: new RegExp(searchString) };
     const options = {
         returnDocument: 'after',
         projection: { _id: 0, Password: 0 },
     };
-    console.log(scimCore_1.scimCore.parsePatchOp(req.body));
-    const scimUser = scimCore_1.scimCore.convertAttributeToUser(scimCore_1.scimCore.parsePatchOp(req.body));
-    console.log(scimUser);
-    // const test = scimCore.parsePatchOp(req.body)
-    // console.log(test)
-    // res.status(200).json(test)
-    // const data = new userManagement(scimUser)
-    // const updatedUser = data.updateUser()
-    // if (!updatedUser)
-    //     return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
-    // (async () => {
-    //     const col = await mongo.getCollection(client)
-    //     const result = await mongo.updateDocFromCol(col, filter, updatedUser, options)
-    //     if (result) {
-    //         return res.status(201).json(scimCore.knownResource(updatedUser))
-    //     }
-    // })()
-});
+    const col = yield mongo.getCollection(app_1.client);
+    const targetUser = yield (yield mongo.findDocFromCol(col, filter)).toArray();
+    // If target path is not undefined, response scimError 404 "NotFound" - RFC7644 3.12.
+    if (!targetUser.length)
+        return res.status(404).json(scimError_1.scimErrors.scimErrorNotFound(searchString));
+    const scimUser = scimCore_1.scimCore.parsePatchOp((req.body));
+    const data = new verifyData_1.userManagement(scimUser);
+    const updatedUser = data.updateUser();
+    if (!updatedUser)
+        return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+    const result = yield mongo.updateDocFromCol(col, filter, scimUser, options);
+    res.status(200).json(scimCore_1.scimCore.knownResource(result.value));
+}));
 module.exports = router;

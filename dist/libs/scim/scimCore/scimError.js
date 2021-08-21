@@ -10,6 +10,13 @@ class scimErrors {
             status: 404,
         };
     }
+    static scimErrorConfilctTarget() {
+        return {
+            schemas: 'urn:ietf:params:scim:api:messages:2.0:Error',
+            detail: 'Duplicate key error index.',
+            status: 409
+        };
+    }
     static scimErrorNoTarget() {
         return {
             schemas: 'urn:ietf:params:scim:api:messages:2.0:Error',
