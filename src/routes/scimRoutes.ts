@@ -8,10 +8,11 @@ import { scimErrors } from '../libs/scim/scimCore/scimError'
 import { scimUser } from '../interfaces/scim/scimUser'
 import { mongodb } from '../libs/mongodb'
 import { client } from '../app'
-import { FilterQuery } from 'mongodb'
+import { FilterQuery, FindOneAndUpdateOption, InsertOneWriteOpResult } from 'mongodb'
 import { scimCore } from '../libs/scim/scimCore/scimCore'
 import { userSchema } from '../interfaces/scim/userSchema'
 import { userManagement } from '../libs/verifyData'
+import { patchOp } from '../interfaces/scim/patchOp'
 
 const router = express.Router()
 const mongo = new mongodb<scimUser>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
@@ -122,7 +123,7 @@ router.delete('/Users/:userId', async (req, res) => {
 // create a user
 router.post('/Users', (req, res) => {
     const body: userSchema = (req.body as userSchema)
-    const scimUser = scimCore.mappingAttributeFromScimUser(body)
+    const scimUser = scimCore.convertAttributeToScimuser(body)
     const data = new userManagement(scimUser)
     const newlyUser = data.createUser()
 
@@ -131,12 +132,49 @@ router.post('/Users', (req, res) => {
 
     (async () => {
         const col = await mongo.getCollection(client)
-        const result = await mongo.insertOnetoCol(col, newlyUser)
-
-        if (result.result.ok) {
-            return res.status(201).json(scimCore.knownResource(newlyUser))
-        }
+        console.log(newlyUser)
+        mongo.insertOnetoCol(col, newlyUser)
+            .then(() => {
+                return res.status(201).json(scimCore.knownResource(newlyUser))
+            })
+        // .catch(err => {
+        //     if (err.code === 2)
+        //         return res.status(500).json('The specified options are in error or are incompatible with other options.')
+        // })
     })()
+})
+
+router.patch('/Users/:userId', (req, res) => {
+    const searchString = req.params.userId
+    const filter: FilterQuery<any> = { ObjectGUID: new RegExp(searchString) }
+    const options: FindOneAndUpdateOption<scimUser> = {
+        returnDocument: 'after',
+        projection: { _id: 0, Password: 0 },
+    }
+    console.log(scimCore.parsePatchOp(req.body))
+    const scimUser = scimCore.convertAttributeToUser(scimCore.parsePatchOp(req.body))
+    console.log(scimUser)
+
+
+    // const test = scimCore.parsePatchOp(req.body)
+    // console.log(test)
+    // res.status(200).json(test)
+
+    // const data = new userManagement(scimUser)
+    // const updatedUser = data.updateUser()
+
+    // if (!updatedUser)
+    //     return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
+
+    // (async () => {
+    //     const col = await mongo.getCollection(client)
+    //     const result = await mongo.updateDocFromCol(col, filter, updatedUser, options)
+
+    //     if (result) {
+    //         return res.status(201).json(scimCore.knownResource(updatedUser))
+    //     }
+    // })()
+
 })
 
 module.exports = router

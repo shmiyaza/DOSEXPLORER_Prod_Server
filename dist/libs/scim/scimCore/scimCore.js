@@ -111,7 +111,7 @@ class scimCore {
             }
         };
     }
-    static mappingAttributeFromScimUser(body) {
+    static convertAttributeToScimuser(body) {
         const enterpriseExtension = body['urn:ietf:params:scim:schemas:extension:enterprise:2.0:User'] ?
             body['urn:ietf:params:scim:schemas:extension:enterprise:2.0:User']
             : undefined;
@@ -121,9 +121,9 @@ class scimCore {
             DisplayName: body.displayName,
             FirstName: body.name ? body.name.givenName : undefined,
             LastName: body.name ? body.name.familyName : undefined,
-            Email: body.emails.filter(element => {
+            Email: body.emails ? body.emails.filter(element => {
                 return element.type === 'work';
-            })[0].value,
+            })[0].value : undefined,
             Country: body.addresses ? body.addresses.filter(element => {
                 return element.type === 'work';
             })[0].country : undefined,
@@ -138,6 +138,48 @@ class scimCore {
             EmployeeID: enterpriseExtension && enterpriseExtension.employeeNumber ?
                 enterpriseExtension.employeeNumber : undefined
         };
+    }
+    static convertAttributeToUser(resource) {
+        const scimUser = {};
+        Object.keys(resource).forEach(key => {
+            if (!resource[key]) {
+                return;
+            }
+            else {
+                if (key === 'username')
+                    scimUser.UserPrincipalName = resource.username;
+                if (key === 'displayname')
+                    scimUser.DisplayName = resource.displayname;
+                if (key === 'emails[type eq \"work\"].value')
+                    scimUser.Email = resource["emails[type eq \"work\"].value"];
+                if (key === 'addresses[type eq \"work\"].country')
+                    scimUser.Country = resource["addresses[type eq \"work\"].country"];
+                if (key === 'active')
+                    scimUser.AccountEnabled = resource.active ? 'Enable' : 'Disable';
+                if (key === 'familyname')
+                    scimUser.LastName = resource["name.familyname"];
+                if (key === 'givenname')
+                    scimUser.FirstName = resource["name.givenname"];
+                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department')
+                    scimUser.Department = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:department"];
+                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber')
+                    scimUser.EmployeeID = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:employeenumber"];
+                if (key === 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization')
+                    scimUser.Company = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:user:organization"];
+            }
+        });
+        return scimUser;
+    }
+    static parsePatchOp(patchOp) {
+        let returnUser = {};
+        patchOp.Operations.forEach(element => {
+            if (element.op.toLowerCase() === 'add' || 'replace')
+                returnUser[element.path.toLowerCase()] = element.value;
+            if (element.op.toLowerCase() === 'remove') {
+                returnUser[element.path.toLowerCase()] = undefined;
+            }
+        });
+        return returnUser;
     }
 }
 exports.scimCore = scimCore;

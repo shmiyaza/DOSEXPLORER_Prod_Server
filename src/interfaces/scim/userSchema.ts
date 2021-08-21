@@ -1,18 +1,18 @@
 export interface userSchema {
-    schemas: string[],
-    userName: string,
-    displayName: string,
-    id: string,
+    schemas?: string[],
+    userName?: string,
+    displayName?: string,
+    id?: string,
     externalId?: string,
     name?: {
         givenName?: string,
         familyName?: string,
     },
-    emails: [
+    emails?: [
         {
-            type: 'work' | 'home',
-            primary: boolean,
-            value: string,
+            type?: 'work' | 'home',
+            primary?: boolean,
+            value?: string,
         }
     ],
     addresses?: [
@@ -24,21 +24,21 @@ export interface userSchema {
     ],
     phoneNumbers?: [
         {
-            type: 'work' | 'home',
+            type?: 'work' | 'home',
             value?: string
         }
     ],
-    active: boolean,
-    "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+    active?: boolean,
+    "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"?: {
         organization?: string,
         department?: string,
         employeeNumber?: string
     },
-    meta: {
-        resourceType: 'User',
-        created: Date,
-        lastModified: Date,
-        location: string,
+    meta?: {
+        resourceType?: 'User',
+        created?: Date,
+        lastModified?: Date,
+        location?: string,
         version?: string
     }
 }
