@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { MongoClient } from 'mongodb'
@@ -9,8 +9,8 @@ export let client: MongoClient
 
 app.disable('x-powered-by')
 app.use(cookieParser())
-app.use(express.json({ 'type': ['application/json', 'application/scim+json'] }))
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json({ type: ['application/json', 'application/scim+json'] }) as RequestHandler)
+app.use(express.urlencoded({ extended: true }) as RequestHandler)
 app.use(session({
     genid: (_req) => { return v4() },
     secret: process.env.SECRET! || 'test',
@@ -52,3 +52,4 @@ MongoClient.connect(process.env.CONNECTION_URI! || 'mongodb://shmiyaza:wpPpNXHG3
 app.use('/users', require('./routes/userRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/scim/v2', require('./routes/scimRoutes'))
+app.use('/saml', require('./routes/samlRoutes'))

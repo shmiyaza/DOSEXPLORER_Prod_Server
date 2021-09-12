@@ -12,7 +12,7 @@ const uuid_1 = require("uuid");
 const app = express_1.default();
 app.disable('x-powered-by');
 app.use(cookie_parser_1.default());
-app.use(express_1.default.json({ 'type': ['application/json', 'application/scim+json'] }));
+app.use(express_1.default.json({ type: ['application/json', 'application/scim+json'] }));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_session_1.default({
     genid: (_req) => { return uuid_1.v4(); },
@@ -52,3 +52,4 @@ mongodb_1.MongoClient.connect(process.env.CONNECTION_URI || 'mongodb://shmiyaza:
 app.use('/users', require('./routes/userRoutes'));
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/scim/v2', require('./routes/scimRoutes'));
+app.use('/saml', require('./routes/samlRoutes'));

@@ -6,7 +6,7 @@ import { client } from "../app";
 
 const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')
 
-export class auth {
+export class localAuth {
     authenticatedUser: user
 
     constructor() {

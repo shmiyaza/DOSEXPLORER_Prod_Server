@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongodb_1 = require("../libs/mongodb");
 const app_1 = require("../app");
-const verifyData_1 = require("../libs/verifyData");
+const userManagement_1 = require("../libs/userManagement");
 const router = express_1.default.Router();
 const mongo = new mongodb_1.mongodb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
 router.all('*', (req, res, next) => {
@@ -54,7 +54,7 @@ router.get('/:user', (req, res) => {
 });
 //Create a user
 router.post('/', (req, res) => {
-    const data = new verifyData_1.userManagement(req.body);
+    const data = new userManagement_1.userManagement(req.body);
     const newlyUser = data.createUser();
     if (!newlyUser)
         return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });
@@ -88,7 +88,7 @@ router.delete('/:user', (req, res) => {
 router.patch('/:user', (req, res) => {
     const searchString = req.params.user;
     const update = req.body;
-    const data = new verifyData_1.userManagement(update);
+    const data = new userManagement_1.userManagement(update);
     const options = { returnDocument: 'after' };
     const filter = {
         $or: [

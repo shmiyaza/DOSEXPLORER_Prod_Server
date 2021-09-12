@@ -4,7 +4,7 @@ import { user } from '../interfaces/objects/user'
 import { mongodb } from '../libs/mongodb'
 import { client } from '../app'
 import { FilterQuery, FindOneAndUpdateOption } from 'mongodb'
-import { userManagement } from '../libs/verifyData'
+import { userManagement } from '../libs/userManagement'
 
 const router = express.Router()
 const mongo = new mongodb<user>(process.env.DATABASE! || 'DOSEXPLORER', process.env.USER! || 'DOSEXPLORER_User')

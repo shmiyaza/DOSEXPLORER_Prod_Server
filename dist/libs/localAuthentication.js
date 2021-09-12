@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.auth = void 0;
+exports.localAuth = void 0;
 const bcryptOperation_1 = require("./bcryptOperation");
 const mongodb_1 = require("../libs/mongodb");
 const app_1 = require("../app");
 const mongo = new mongodb_1.mongodb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
-class auth {
+class localAuth {
     constructor() {
         this.authenticatedUser = {};
     }
@@ -31,4 +31,4 @@ class auth {
         });
     }
 }
-exports.auth = auth;
+exports.localAuth = localAuth;

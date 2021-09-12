@@ -8,10 +8,10 @@ import { scimErrors } from '../libs/scim/scimCore/scimError'
 import { scimUser } from '../interfaces/scim/scimUser'
 import { mongodb } from '../libs/mongodb'
 import { client } from '../app'
-import { FilterQuery, FindOneAndUpdateOption, InsertOneWriteOpResult } from 'mongodb'
+import { FilterQuery, FindOneAndUpdateOption } from 'mongodb'
 import { scimCore } from '../libs/scim/scimCore/scimCore'
 import { userSchema } from '../interfaces/scim/userSchema'
-import { userManagement } from '../libs/verifyData'
+import { userManagement } from '../libs/userManagement'
 import { patchOp } from '../interfaces/scim/patchOp'
 
 const router = express.Router()

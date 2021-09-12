@@ -1,13 +1,13 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 
-import { auth } from '../libs/localAuthentication'
+import { localAuth } from '../libs/localAuthentication'
 
 const router = express.Router()
 
 // Local login with username and userpassword
 router.post('/login', async (req, res) => {
-    const authContext = new auth()
+    const authContext = new localAuth()
     const result = await authContext.localAuth(req.body.username, req.body.password)
 
     if (!result) {

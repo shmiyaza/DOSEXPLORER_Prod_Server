@@ -21,7 +21,7 @@ const scimError_1 = require("../libs/scim/scimCore/scimError");
 const mongodb_1 = require("../libs/mongodb");
 const app_1 = require("../app");
 const scimCore_1 = require("../libs/scim/scimCore/scimCore");
-const verifyData_1 = require("../libs/verifyData");
+const userManagement_1 = require("../libs/userManagement");
 const router = express_1.default.Router();
 const mongo = new mongodb_1.mongodb(process.env.DATABASE || 'DOSEXPLORER', process.env.USER || 'DOSEXPLORER_User');
 // verify jwt token from authrorization header.
@@ -115,7 +115,7 @@ router.delete('/Users/:userId', (req, res) => __awaiter(void 0, void 0, void 0, 
 router.post('/Users', (req, res) => {
     const body = req.body;
     const scimUser = scimCore_1.scimCore.convertAttributeToScimuser(body);
-    const data = new verifyData_1.userManagement(scimUser);
+    const data = new userManagement_1.userManagement(scimUser);
     const newlyUser = data.createUser();
     if (!newlyUser)
         return res.status(409).json({ errors: data.errorCnt, message: data.errorMsg });
@@ -146,7 +146,7 @@ router.patch('/Users/:userId', (req, res) => __awaiter(void 0, void 0, void 0, f
     if (!targetUser.length)
         return res.status(404).json(scimError_1.scimErrors.scimErrorNotFound(searchString));
     const scimUser = scimCore_1.scimCore.parsePatchOp((req.body));
-    const data = new verifyData_1.userManagement(scimUser);
+    const data = new userManagement_1.userManagement(scimUser);
     const updatedUser = data.updateUser();
     if (!updatedUser)
         return res.status(400).json({ errors: data.errorCnt, message: data.errorMsg });

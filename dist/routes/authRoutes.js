@@ -18,7 +18,7 @@ const localAuthentication_1 = require("../libs/localAuthentication");
 const router = express_1.default.Router();
 // Local login with username and userpassword
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const authContext = new localAuthentication_1.auth();
+    const authContext = new localAuthentication_1.localAuth();
     const result = yield authContext.localAuth(req.body.username, req.body.password);
     if (!result) {
         res.status(401).json({ message: 'authentication failed.' });
